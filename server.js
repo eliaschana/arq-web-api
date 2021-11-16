@@ -1,6 +1,6 @@
-const http = require('http');
-const app = require('./app');
-
-const server = http.createServer(app);
-
-server.listen(3000);
+// ###### INICIO DE LA APP
+const app = require("./app");
+const PORT = process.env.PORT || 3002
+app.listen(PORT, () => {
+    console.log(`Servidor levantado en el puerto ${PORT}`)
+})

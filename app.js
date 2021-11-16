@@ -1,39 +1,80 @@
-/*
-datos que tomamos del proceso de confirguración de la base de datos online MongoDB Altas
-*/
-// user - pass: dBuser1 : dBuser1
-// SRV: mongodb+srv://dBuser1:dBuser1@cluster0.schfn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+const express = require('express')
+const bodyParser = require( 'body-parser')
+const utilsError = require('./utils/errorHandler')
+const cors = require('cors')
+require('dotenv').config()
 
-const express  = require('express'); // carga el módulo Express
-const mongoose = require('mongoose'); // carga el módulo Mongoose
-const Meeting = require('./models/meeting'); // carga el esquema de Mongoose que generamos en la carpeta "models"
+// ###### RUTAS
+const reunionRutas = require('./routes/reunion')
 
-const calenRoutes = require('./rutas/calendario');
-const usuariosRoutes = require('./rutas/usuario');
 
-const app = express(); // instancia nuetra app
 
-/*
-usa el método .conect() de Mongoose
-para conectarse a nuestra base de datos online MongoDB Altas,
-pasándole como parámetro el string que nos dió la misma cuando la configuramos,
-al elegir el método de conexión. Ese método .conect() devuelve una Promesa/Promise
-que resolvemos con la función .then() (... y .catch() para los posibles errores)
-*/
-mongoose.connect('mongodb+srv://dBuser1:dBuser1@cluster0.schfn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
-.then(() => {
-    console.log('Conectados a MongoDB!');
+
+const PORT = process.env.PORT || 3001
+
+
+const app = express()
+
+
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json())
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type','Authorization')
+    next()
 })
-.catch((error) => {
-    console.log('FALLA al conectarse a MongoDB!');
-    console.log(error);
-
-}); 
-
-app.use(express.json()); // para parsear como JSON el cuerpo de nuestra solicitud, y la respuesta
-
-app.use('/api/v1/meetings', calenRoutes);
-app.use('/api/v1/auth', usuariosRoutes);
+app.options('*', cors())
 
 
-module.exports = app; // exportamos nuestra app para poder tomerla en el server
+
+app.use('/api/v1/meetings', reunionRutas)
+
+
+
+// ###### ERROR HANDLER
+app.use(utilsError.errorHandler)
+
+//#### NOT FOUND ROUTE
+app.use(utilsError.errorHandler404)
+  
+// ###### CONEXION A MONGO
+//db.getConnection()
+
+// ###### CONEXION A REDIS
+//conectToRedis
+
+/////////////////////////////////////////////
+// Base de datos
+// Relaciones y sincronización
+/////////////////////////////////////////////
+
+/*const sequelize = require('./database/sequelizeConnection')
+
+sequelize.sync({ 
+    schema: 'public', searchPath: 'public'
+    , alter: true
+})
+.then(resultado => { console.log("\u001b[1;34m  [sequelize sync core]" + JSON.stringify(resultado.models)) })
+.catch(error => { throw new Error(error) })
+
+const reunion = require("./models/reunion");
+
+/*
+const cliente = require("./models/cliente");
+const cliente2 = require("./models/servicio");
+/*db.sync({ 
+    schema: 'gestion', searchPath: 'gestion'
+    //, alter: true
+})
+.then(resultado => { console.log("\u001b[1;34m  [sequelize sync core]" + JSON.stringify(resultado.models)) })
+.catch(error => { throw new Error(error) })
+*/
+//const Stock = require("./models/stock");
+
+//const cliente = require("./models/compra");
+//const cliente2 = require("./models/compraProducto");
+/*const cliente = require("./models/egreso");
+const cliente2 = require("./models/egresoProducto");*/
+
+module.exports = app;
