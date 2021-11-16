@@ -2,7 +2,7 @@
 # Arq-web-api
 
 
-# Variables de entorno 
+## Variables de entorno 
 Crear un archivo .env con las siguientes variables :  
 
 DB_USER=postgres  
@@ -20,7 +20,7 @@ DB_DIALECT=postgres
 
 
 
-### Uso  
+## Uso  
 
 
 Instalacion de dependencias :  
