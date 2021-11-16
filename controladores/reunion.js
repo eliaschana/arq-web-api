@@ -2,7 +2,7 @@ const Meeting = require('../models/meeting');
 
 exports.crearReunion = (req, res) => {
     const meeting = new Meeting({
-        title: req.body.title,
+        title: req.body.titulo,
         decription: req.body.descripcion,
 
     });
